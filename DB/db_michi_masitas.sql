@@ -18,35 +18,6 @@ USE `db_michi_masitas`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `producto_venta`
---
-
-DROP TABLE IF EXISTS `producto_venta`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `producto_venta` (
-  `id_producto_venta` int NOT NULL AUTO_INCREMENT,
-  `id_producto_pv` int NOT NULL,
-  `id_venta_pv` int NOT NULL,
-  PRIMARY KEY (`id_producto_venta`),
-  UNIQUE KEY `id_producto_venta_UNIQUE` (`id_producto_venta`),
-  UNIQUE KEY `id_venta_UNIQUE` (`id_venta_pv`),
-  KEY `id_producto_pv_idx` (`id_producto_pv`),
-  CONSTRAINT `id_producto_pv` FOREIGN KEY (`id_producto_pv`) REFERENCES `t_productos` (`id_producto`),
-  CONSTRAINT `id_venta_pv` FOREIGN KEY (`id_venta_pv`) REFERENCES `t_ventas` (`id_venta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `producto_venta`
---
-
-LOCK TABLES `producto_venta` WRITE;
-/*!40000 ALTER TABLE `producto_venta` DISABLE KEYS */;
-/*!40000 ALTER TABLE `producto_venta` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `t_cuidades`
 --
 
@@ -57,6 +28,7 @@ CREATE TABLE `t_cuidades` (
   `id_cuidad` int NOT NULL AUTO_INCREMENT,
   `nombre_cuidad` varchar(25) CHARACTER SET utf8mb3 COLLATE utf8mb3_spanish_ci NOT NULL,
   `id_dpto_ciudad` int NOT NULL,
+  `estado_ciudad` int NOT NULL,
   PRIMARY KEY (`id_cuidad`),
   UNIQUE KEY `id_cuidad_UNIQUE` (`id_cuidad`),
   KEY `id_dpto_ciudad_idx` (`id_dpto_ciudad`),
@@ -83,6 +55,7 @@ DROP TABLE IF EXISTS `t_departamentos`;
 CREATE TABLE `t_departamentos` (
   `id_dpto` int NOT NULL AUTO_INCREMENT,
   `nombre_dpto` varchar(25) CHARACTER SET utf8mb3 COLLATE utf8mb3_spanish_ci NOT NULL,
+  `estado_dpto` int NOT NULL,
   PRIMARY KEY (`id_dpto`),
   UNIQUE KEY `id_dpto_UNIQUE` (`id_dpto`),
   UNIQUE KEY `nombre_dpto_UNIQUE` (`nombre_dpto`)
@@ -108,7 +81,6 @@ DROP TABLE IF EXISTS `t_facturas`;
 CREATE TABLE `t_facturas` (
   `id_factura` int NOT NULL AUTO_INCREMENT,
   `codigo_fac` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_spanish_ci NOT NULL,
-  `id_venta_fac` int NOT NULL,
   `id_usuario_fac` int NOT NULL,
   `fecha_fac` date NOT NULL,
   `total_fac` double NOT NULL,
@@ -116,10 +88,8 @@ CREATE TABLE `t_facturas` (
   PRIMARY KEY (`id_factura`),
   UNIQUE KEY `id_factura_UNIQUE` (`id_factura`),
   UNIQUE KEY `codigo_fac_UNIQUE` (`codigo_fac`),
-  KEY `id_venta_fac_idx` (`id_venta_fac`),
   KEY `id_usuario_fac_idx` (`id_usuario_fac`),
-  CONSTRAINT `id_usuario_fac` FOREIGN KEY (`id_usuario_fac`) REFERENCES `t_usuarios` (`id_usuario`),
-  CONSTRAINT `id_venta_fac` FOREIGN KEY (`id_venta_fac`) REFERENCES `t_ventas` (`id_venta`)
+  CONSTRAINT `id_usuario_fac` FOREIGN KEY (`id_usuario_fac`) REFERENCES `t_usuarios` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -208,9 +178,15 @@ DROP TABLE IF EXISTS `t_ventas`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_ventas` (
   `id_venta` int NOT NULL,
+  `id_factura_ven` int NOT NULL,
+  `id_producto_ven` int NOT NULL,
   `cantidad_ven` int NOT NULL,
   `precio_ven` double NOT NULL,
-  PRIMARY KEY (`id_venta`)
+  PRIMARY KEY (`id_venta`),
+  KEY `id_producto_ven_idx` (`id_producto_ven`),
+  KEY `id_factura_ven_idx` (`id_factura_ven`),
+  CONSTRAINT `id_factura_ven` FOREIGN KEY (`id_factura_ven`) REFERENCES `t_facturas` (`id_factura`),
+  CONSTRAINT `id_producto_ven` FOREIGN KEY (`id_producto_ven`) REFERENCES `t_productos` (`id_producto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,4 +208,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-26  2:10:02
+-- Dump completed on 2022-09-29 15:51:45
